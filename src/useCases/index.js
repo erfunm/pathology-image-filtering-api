@@ -1,5 +1,5 @@
-const users = require('./users')
+const instagram = require('./instagram')
 
 module.exports = Object.freeze({
-  users
+  instagram
 })

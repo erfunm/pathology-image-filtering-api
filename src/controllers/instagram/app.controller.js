@@ -3,19 +3,14 @@ const { Response } = require('../../frameworks/common')
 module.exports = (dependencies) => {
   const {
     useCases: {
-      users: { getUserUseCase }
+      instagram: { appUseCase }
     }
   } = dependencies
 
   return async (req, res, next) => {
     try {
-      const {
-        locals: { user }
-      } = res
-
-      const getUser = getUserUseCase(dependencies)
-      const verifiedUser = await getUser.verify(user)
-      const content = await getUser.execute({ uid: verifiedUser.uid }, false)
+      const app = appUseCase(dependencies)
+      const content = await app.execute()
 
       const response = new Response({ content })
       res.status(response.status).json(response)

@@ -1,7 +1,7 @@
 const serviceControllers = require('./service')
-const userControllers = require('./users')
+const instagramControllers = require('./instagram')
 
 module.exports = {
   serviceControllers,
-  userControllers
+  instagramControllers
 }

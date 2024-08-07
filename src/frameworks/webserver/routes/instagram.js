@@ -1,6 +1,6 @@
 const express = require('express')
 
-const { userControllers } = require('../../../controllers')
+const { instagramControllers } = require('../../../controllers')
 
 module.exports = (dependencies) => {
   const router = express.Router()
@@ -10,13 +10,13 @@ module.exports = (dependencies) => {
   } = dependencies
 
   const {
-    getUserController
-  } = userControllers(dependencies)
+    appController
+  } = instagramControllers(dependencies)
 
   router
-    .route('/me')
+    .route('/app')
     .get(
-      getUserController
+      appController
     )
 
   return router
