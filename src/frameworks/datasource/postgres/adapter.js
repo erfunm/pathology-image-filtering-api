@@ -37,6 +37,7 @@ module.exports = class PostgresAdapter {
           }
         })
         .catch((error) => {
+          console.error('db connection string has problem:', connstr)
           console.error('Unable to connect to the database:', error)
         })
     } catch (error) {
