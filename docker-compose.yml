@@ -1,0 +1,39 @@
+version: '3.4'
+
+# Define common networks and volumes upfront
+networks:
+  net:
+
+volumes:
+  nodecorestorage:
+
+# Database service configuration
+services:
+  db:
+    image: postgres:14-alpine
+    ports:
+      - '5432:5432'
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: DBNAME
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+    networks:
+      - net
+    volumes:
+      - nodecorestorage:/var/lib/postgresql/data
+
+  # API service configuration
+  api:
+    image: node-core:1.0.0
+    ports:
+      - '3000:3000'
+    environment:
+      ENV: development
+      NODE_ENV: development
+    networks:
+      - net
+    depends_on:
+      - db
+    command: npm start
+    restart: unless-stopped
