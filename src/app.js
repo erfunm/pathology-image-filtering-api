@@ -17,8 +17,8 @@ const ErrorHandler = require('./frameworks/webserver/ErrorHandler')
 
 const dependencies =
   process.env.NODE_ENV === 'production'
-    ? require('./config/dependencies.prd')
-    : require('./config/dependencies.dev')
+    ? require('./config/dependencies.prd')({ storages: process.env.STORAGES.split(',') })
+    : require('./config/dependencies.dev')({ storages: process.env.STORAGES.split(',') })
 
 const CORSWhitelist = process.env?.CORS_WHITELIST?.split(',') ?? []
 
