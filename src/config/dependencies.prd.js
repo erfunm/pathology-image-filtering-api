@@ -2,7 +2,7 @@ const middlewares = require('../frameworks/middlewares')
 const useCases = require('../useCases')
 const memoryStorage = {}
 
-module.exports = ({ storages: [] }) => {
+module.exports = ({ storages = [] }) => {
   let configs = {
     useCases,
     middlewares
