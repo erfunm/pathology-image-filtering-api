@@ -3,9 +3,17 @@ const useCases = require('../useCases')
 const memoryStorage = {}
 
 module.exports = ({ storages = [] }) => {
+  const envConfig = {}
+  for (let key in process.env) {
+    if (key.startsWith('APP_')) {
+      envConfig[key] = process.env[key]
+    }
+  }
+
   let configs = {
     useCases,
-    middlewares
+    middlewares,
+    envConfig
   }
   if (storages.includes('memory')) {
     configs.memoryStorage = memoryStorage

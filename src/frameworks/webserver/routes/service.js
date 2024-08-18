@@ -4,9 +4,10 @@ const { serviceControllers } = require('../../../controllers')
 
 module.exports = (dependencies) => {
   const router = express.Router()
-  const { healthController } =
+  const { rootController, healthController } =
     serviceControllers(dependencies)
 
+  router.route('/').get(rootController)
   router.route('/health').get(healthController)
 
   return router
