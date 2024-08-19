@@ -1,6 +1,6 @@
 const path = require('path')
 const { ResponseError } = require('../../frameworks/common')
-const { readdir } = require('fs')
+const { readdir, statSync } = require('fs')
 
 module.exports = (dependecies) => {
   const {
@@ -14,6 +14,10 @@ module.exports = (dependecies) => {
         if (err) {
           reject(new ResponseError(err.message, 500))
         }
+        files = files.filter(file => {
+          // check if it's directory
+          return statSync(path.resolve(APP_CONTENT_PATH, file)).isDirectory() && !file.startsWith('z_')
+        }).sort((a, b) => a.localeCompare(b))
         resolve(files)
       })
     })
