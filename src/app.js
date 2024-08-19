@@ -1,7 +1,7 @@
 const express = require('express')
 const helmet = require('helmet')
 const bodyParser = require('body-parser')
-const multer = require('multer')()
+// const multer = require('multer')()
 const cors = require('cors')
 
 const app = express()
@@ -24,7 +24,7 @@ const CORSWhitelist = process.env?.CORS_WHITELIST?.split(',') ?? []
 
 const ApiPrefix = process.env?.API_PREFIX ?? '/api/v1'
 
-const fileUpload = multer.fields([{ name: 'file', maxCount: 1 }])
+// const fileUpload = multer.fields([{ name: 'file', maxCount: 1 }])
 
 // Application actions
 const start = function () {
@@ -48,7 +48,7 @@ const start = function () {
   )
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: true }))
-  app.use(fileUpload)
+  // app.use(fileUpload)
   app.use(requestLoggerMiddleware)
   // routes
   app.use(ApiPrefix, routes(dependencies))
