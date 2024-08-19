@@ -16,7 +16,7 @@ module.exports = (dependecies) => {
         }
         files = files.filter(file => {
           // check if it's directory
-          return statSync(path.resolve(APP_CONTENT_PATH, file)).isDirectory() && !file.startsWith('z_')
+          return statSync(path.resolve(APP_CONTENT_PATH, file)).isDirectory()
         }).sort((a, b) => a.localeCompare(b))
         resolve(files)
       })
