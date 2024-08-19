@@ -1,7 +1,7 @@
 const { ResponseError } = require('../../frameworks/common')
 
 const path = require('path')
-const { readdir, existsSync, readFileSync, statSync, createReadStream, renameSync } = require('fs')
+const { readdir, existsSync, readFileSync, statSync, createReadStream, unlinkSync, writeFileSync, fstat } = require('fs')
 const mime = require('mime-types')
 const CSVParser = require('csv-parser')
 const CSVWriter = require('csv-writer')
@@ -62,9 +62,9 @@ module.exports = (dependecies) => {
             csvData.list.push({ ...data, postId: data[Object.keys(data)[0]] })
           } else {
             // DELETE
-            const deletedPath = path.resolve(APP_CONTENT_PATH, InstagramID, `.DELETED_${data.filename}`)
-            renameSync(filePath, deletedPath)
-            csvData.deleted.push({ ...data, postId: data[Object.keys(data)[0]] })
+            // const deletedPath = path.resolve(APP_CONTENT_PATH, InstagramID, `.DELETED_${data.filename}`)
+            unlinkSync(filePath)
+            // csvData.deleted.push({ ...data, postId: data[Object.keys(data)[0]] })
           }
         })
         .on('end', () => {
@@ -75,50 +75,56 @@ module.exports = (dependecies) => {
       if (readStream.list.length === 0) {
         resolve(readStream)
       }
+
+      // Create new JSON File
+      const jsonPath = path.resolve(APP_CONTENT_PATH, InstagramID, 'posts_info.json')
+      writeFileSync(jsonPath, JSON.stringify(readStream.list, null, 2))
+      readStream.list = []
+      resolve(readStream)
       // Update the original CSV file
-      const csvWriter = CSVWriter.createObjectCsvWriter({
-        path: csvPath,
-        header: [
-          { id: 'postId', title: 'post_id' },
-          { id: 'filename', title: 'filename' },
-          { id: 'description', title: 'description' },
-          { id: 'likes', title: 'likes' },
-          { id: 'comments', title: 'comments' },
-          { id: 'views', title: 'views' },
-        ]
-      });
-      csvWriter.writeRecords(readStream.list)
-        .then(() => {
-          readStream.list = []
-          resolve(readStream)
-        });
+      // const csvWriter = CSVWriter.createObjectCsvWriter({
+      //   path: csvPath,
+      //   header: [
+      //     { id: 'postId', title: 'post_id' },
+      //     { id: 'filename', title: 'filename' },
+      //     { id: 'description', title: 'description' },
+      //     { id: 'likes', title: 'likes' },
+      //     { id: 'comments', title: 'comments' },
+      //     { id: 'views', title: 'views' },
+      //   ]
+      // });
+      // csvWriter.writeRecords(readStream.list)
+      //   .then(() => {
+      //     readStream.list = []
+      //     resolve(readStream)
+      //   });
     })
-    await new Promise((resolve, reject) => {
-      if (readStream.deleted.length === 0) {
-        resolve(readStream)
-      }
-      // Update the original CSV file
-      const csvWriter = CSVWriter.createObjectCsvWriter({
-        path: csvDeletedPath,
-        header: [
-          { id: 'postId', title: 'post_id' },
-          { id: 'filename', title: 'filename' },
-          { id: 'description', title: 'description' },
-          { id: 'likes', title: 'likes' },
-          { id: 'comments', title: 'comments' },
-          { id: 'views', title: 'views' },
-        ],
-        append: true
-      });
-      csvWriter.writeRecords(readStream.deleted)
-        .then(() => {
-          readStream.deleted = []
-          resolve(readStream)
-        });
-    })
-    const exportPath = path.resolve(APP_CONTENT_PATH, InstagramID, 'posts_info.csv')
+    // await new Promise((resolve, reject) => {
+    //   if (readStream.deleted.length === 0) {
+    //     resolve(readStream)
+    //   }
+    //   // Update the original CSV file
+    //   const csvWriter = CSVWriter.createObjectCsvWriter({
+    //     path: csvDeletedPath,
+    //     header: [
+    //       { id: 'postId', title: 'post_id' },
+    //       { id: 'filename', title: 'filename' },
+    //       { id: 'description', title: 'description' },
+    //       { id: 'likes', title: 'likes' },
+    //       { id: 'comments', title: 'comments' },
+    //       { id: 'views', title: 'views' },
+    //     ],
+    //     append: true
+    //   });
+    //   csvWriter.writeRecords(readStream.deleted)
+    //     .then(() => {
+    //       readStream.deleted = []
+    //       resolve(readStream)
+    //     });
+    // })
+    const exportPath = path.resolve(APP_CONTENT_PATH, InstagramID, 'posts_info.json')
     return {
-      FileName: 'posts_info.csv',
+      FileName: 'posts_info.json',
       Path: exportPath,
       ContentType: mime.lookup(exportPath),
       ContentLength: statSync(exportPath).size,
