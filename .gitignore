@@ -106,4 +106,4 @@ dist
 # other
 .notes.md
 .temp/
-content/
+./content
