@@ -36,9 +36,7 @@ module.exports = (dependecies) => {
         if (typeof files === 'undefined') {
           reject(new ResponseError('No content found', 404))
         }
-        files = files?.filter(file => {
-          return /^.DELETED_.+/.test(file) === false
-        }).sort((a, b) => a.localeCompare(b))?.map(file => {
+        files = files.sort((a, b) => a.localeCompare(b))?.map(file => {
           return {
             name: file,
             path: path.resolve(contentPath, file)
@@ -48,7 +46,6 @@ module.exports = (dependecies) => {
       })
     })
     const csvPath = path.resolve(APP_CONTENT_PATH, InstagramID, 'posts_info.csv')
-    const csvDeletedPath = path.resolve(APP_CONTENT_PATH, InstagramID, 'deleted_posts_info.csv')
     const readStream = await new Promise((resolve, reject) => {
       const csvData = {
         list: [],
@@ -62,8 +59,10 @@ module.exports = (dependecies) => {
             csvData.list.push({ ...data, postId: data[Object.keys(data)[0]] })
           } else {
             // DELETE
+            if (existsSync(filePath)) {
+              unlinkSync(filePath)
+            }
             // const deletedPath = path.resolve(APP_CONTENT_PATH, InstagramID, `.DELETED_${data.filename}`)
-            unlinkSync(filePath)
             // csvData.deleted.push({ ...data, postId: data[Object.keys(data)[0]] })
           }
         })
