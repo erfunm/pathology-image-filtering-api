@@ -129,5 +129,37 @@ module.exports = (dependecies) => {
     })
   }
 
-  return { execute }
+  const GPTResultToCSV = async () => {
+    const gptResultPath = path.resolve(APP_CONTENT_PATH, 'gpt_result.txt')
+    const csvPath = path.resolve(APP_CONTENT_PATH, 'gpt_result.csv')
+
+    const csvData = []
+    readFileSync(gptResultPath, 'utf8').split('\n').forEach(itm => {
+      if (!String(itm).trim().length) return
+      const {
+        custom_id: filename,
+        response,
+      } = JSON.parse(itm)
+      const description = response?.body?.choices[0]?.message?.content ?? ''
+      csvData.push({
+        filename,
+        description: description.replace(/\#(\w+)/gim, '')
+      })
+    })
+    // write it to a CSV file
+    const writer = CSVWriter.createObjectCsvWriter({
+      path: csvPath,
+      header: [
+        { id: 'filename', title: 'filename' },
+        { id: 'description', title: 'description' }
+      ]
+    })
+    writer.writeRecords(csvData)
+      .then(() => {
+        console.log('The CSV file was written successfully: %s', csvPath)
+      })
+    return csvData
+  }
+
+  return { execute, GPTResultToCSV }
 }
