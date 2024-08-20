@@ -5,7 +5,7 @@
   "description": "a clean architecture based nodejs boilerplate",
   "main": "index.js",
   "scripts": {
-    "start": "node .",
+    "start": "npm run dev",
     "dev": "node-dev .",
     "migrations:up": "node ./migrations/up",
     "migrations:down": "node ./migrations/down",
